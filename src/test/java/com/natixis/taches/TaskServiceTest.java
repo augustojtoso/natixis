@@ -1,16 +1,15 @@
 package com.natixis.taches;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.natixis.taches.model.Task;
-import com.natixis.taches.model.TaskStatusDTO;
+import com.natixis.taches.model.TaskDTO;
 import com.natixis.taches.repository.TaskRepository;
 import com.natixis.taches.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
@@ -28,8 +27,11 @@ public class TaskServiceTest {
     @Mock
     private static TaskRepository repository;
 
+    @Spy
+    private static ObjectMapper objectMapper;
+
     @InjectMocks
-    private static TaskService service;
+    private TaskService service;
 
     @Captor
     ArgumentCaptor<Task> captor;
@@ -61,7 +63,7 @@ public class TaskServiceTest {
     @Test
     public void test_addNewTask(){
         //given
-        var undone = Task.builder().id(1L).label("undone").complete(false).build();
+        var undone = TaskDTO.builder().label("undone").build();
         //When
         service.addNewTask(undone);
         //Then
@@ -89,13 +91,12 @@ public class TaskServiceTest {
     @Test
     public void test_updateStatus_valid(){
         //given
-        var request = TaskStatusDTO.builder().newStatus(true).build();
         var storedTask = Task.builder().id(1L).label("test").complete(false).build();
 
         when(repository.findById(1L)).thenReturn(Optional.of(storedTask));
 
         //When
-        service.updateTaskStatus(1L,request);
+        service.updateTaskStatus(1L,true);
 
         //Then
         verify(repository).save(captor.capture());
@@ -106,7 +107,7 @@ public class TaskServiceTest {
 
     @Test
     public void test_updateStatus_NotFound() {
-        assertThrows(ResponseStatusException.class,() -> service.updateTaskStatus(1L, null));
+        assertThrows(ResponseStatusException.class,() -> service.updateTaskStatus(1L, false));
     }
 
 }

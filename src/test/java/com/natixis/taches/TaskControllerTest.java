@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -22,7 +24,7 @@ public class TaskControllerTest {
     @Test
     public void test_getAll_noParam(){
         //given
-        var defaultParam = "all";
+        Optional<String> defaultParam = Optional.empty();
         //when
         controller.getTasks(defaultParam);
         //then
@@ -32,7 +34,7 @@ public class TaskControllerTest {
     @Test
     public void test_getAll_badParam(){
         //given
-        var defaultParam = "bla";
+        var defaultParam =  Optional.of("bla");
         //when
         controller.getTasks(defaultParam);
         //then
@@ -42,7 +44,7 @@ public class TaskControllerTest {
     @Test
     public void test_getUndone(){
         //given
-        var defaultParam = "aeffectuer";
+        var defaultParam =  Optional.of("aeffectuer");
         //when
         controller.getTasks(defaultParam);
         //then
