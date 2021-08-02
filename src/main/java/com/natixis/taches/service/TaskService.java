@@ -24,6 +24,7 @@ public class TaskService {
     }
 
     public Task addNewTask(Task task) {
+        task.setId(null);
         return tasksRepository.save(task);
     }
 
